@@ -30,18 +30,6 @@ class Barrow extends Model
         return '<a class="btn btn-sm btn-link" href="' . route('barrow.soft_delete', ['id' => $this->id]) . '" data-toggle="tooltip" title="Archive this item"><i class="la la-external-link"></i> Archive</a>';
     }
 
-
-    protected static function booted()
-    {
-        static::saved(function ($barrow) {
-            $key = \App\Models\Key::find($barrow->key_id);
-            if ($key) {
-                $key->status = 'borrowed'; // Update the status to your desired value
-                $key->save();
-            }
-        });
-    }
-
     public function teacher()
     {
         return $this->belongsTo(Teacher::class);

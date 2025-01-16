@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use Carbon\Carbon;
+use App\Models\Key;
 use App\Models\Barrow;
+use App\Models\Retrun;
 use App\Models\ArchiveBorrow;
 use App\Http\Requests\BarrowRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
@@ -21,7 +23,7 @@ class BarrowCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Barrow::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/barrow');
-        CRUD::setEntityNameStrings('barrow', 'barrows');
+        CRUD::setEntityNameStrings('borrow', 'borrows');
     }
     protected function setupListOperation()
     {
@@ -86,14 +88,22 @@ class BarrowCrudController extends CrudController
 
     public function key_return($id)
     {
-        $barrow = \App\Models\Barrow::find($id);
+        $barrow = Barrow::find($id);
+
         if ($barrow) {
             // Create a new return entry
-            $return = new \App\Models\Retrun;
+            $return = new Retrun;
             $return->key_id = $barrow->key_id;
             $return->teacher_id = $barrow->teacher_id;
             $return->date = Carbon::now();
             $return->save();
+
+            // Update the status of the key table
+            $key = Key::find($barrow->key_id);
+            if ($key) {
+                $key->status = 'returned'; // Update the status to 'returned' or any appropriate value
+                $key->save();
+            }
 
             // Update the status of the barrow table
             $barrow->status = 'returned'; // Update the status to 'returned' or any appropriate value
@@ -139,7 +149,7 @@ class BarrowCrudController extends CrudController
         ->attribute('key_name')
         ->label('Key')
         ->options(function () {
-            return \App\Models\Key::where('status', '!=', 'borrowed')->orWhereNull('status')->get();
+            return Key::where('status', '!=', 'borrowed')->orWhereNull('status')->get();
         });
 
         // Barcode field to accept input
@@ -157,15 +167,17 @@ class BarrowCrudController extends CrudController
 
         // Override the saving process to set the teacher_id based on the barcode
         CRUD::getRequest()->merge([
-            'teacher_id' => $this->getTeacherIdFromBarcode(CRUD::getRequest()->input('barcode')),
+            'teacher_id' => $this->getTeacherIdFromBarcode(CRUD::getRequest()->input('barcode'),CRUD::getRequest()->input('key_id')),
         ]);
 
         // Hidden date field
         CRUD::field('date')->type('hidden')->label('Date')->value(Carbon::now());
     }
 
-    protected function getTeacherIdFromBarcode($barcode)
+    protected function getTeacherIdFromBarcode($barcode, $key_id)
     {
+        Key::where('id', $key_id)->update(['status' => 'borrowed']);
+
         $teacher = \App\Models\Teacher::where('code', $barcode)->first();
 
         return $teacher ? $teacher->id : null;

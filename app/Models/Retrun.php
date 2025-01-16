@@ -16,17 +16,6 @@ class Retrun extends Model
     protected $table = 'returns';
     protected $guarded = ['id'];
 
-    protected static function booted()
-    {
-        static::saved(function ($barrow) {
-            $key = \App\Models\Key::find($barrow->key_id);
-            if ($key) {
-                $key->status = 'returned'; // Update the status to your desired value
-                $key->save();
-            }
-        });
-    }
-
     public function archiveReturn($crud = false)
     {
         // Using route() to generate the correct URL with the 'id' parameter
