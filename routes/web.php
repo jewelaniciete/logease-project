@@ -1,13 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GuardController;
 use App\Http\Controllers\Admin\BarrowCrudController;
 use App\Http\Controllers\Admin\RetrunCrudController;
 use App\Http\Controllers\Admin\ArchiveBorrowCrudController;
 use App\Http\Controllers\Admin\ArchiveReturnCrudController;
 
 
-Route::permanentRedirect('/{any?}','/admin'); //prevent access to non admin routes
+//Route::permanentRedirect('/{any?}','/admin'); //prevent access to non admin routes
+
+Route::group(['prefix' => 'guard'], function () {
+    Route::get('/login', [GuardController::class, 'login'])->name('guard.login');
+});
 
 Route::get('barrow/delete/{id}', [BarrowCrudController::class, 'key_return'])->name('barrow.delete');
 
