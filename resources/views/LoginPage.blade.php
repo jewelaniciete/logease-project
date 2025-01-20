@@ -25,7 +25,8 @@
                 </div>
             </div>
 
-            <form action="#" method="POST" class="max-w-sm mx-auto flex flex-col align-center">
+            <form action="{{ route('guard.login') }}" method="POST" class="max-w-sm mx-auto flex flex-col align-center">
+                @csrf
                 <!-- Email Field -->
                 <div class="mb-4">
                     <label for="email" class="block mb-2 text-md font-semibold tracking-widest" style="font-family: 'Poppins', sans-serif;">Email:</label>

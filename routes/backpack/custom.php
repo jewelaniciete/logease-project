@@ -24,6 +24,7 @@ Route::group([
     Route::crud('archive-borrow', 'ArchiveBorrowCrudController');
     Route::crud('archive-return', 'ArchiveReturnCrudController');
     Route::crud('user', 'UserCrudController');
+    Route::crud('guard', 'GuardCrudController');
 }); // this should be the absolute last line of this file
 
 /**
