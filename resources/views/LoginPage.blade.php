@@ -12,7 +12,7 @@
 
 <body>
     <div class="flex items-center justify-center min-h-screen bg-gray-100" style="background-image: url('/image/bg.jpg'); background-size: cover; background-position: center;">
-        <div class="w-full max-w-xl pt-5 pb-10 bg-[#ecdbdc] rounded shadow-md rounded-[80px] border border-[#8a211b]">
+        <div class="w-full max-w-xl pt-5 pb-10 bg-[#ecdbdc] rounded shadow-md rounded-[80px] border-2 border-[#8a211b]">
             <div class="grid grid-cols-4 gap-4 items-center justify-items-center">
                 <div class="col-span-1">
                     <img src="/image/logo.png" alt="Logo" class="w-24 h-24">
@@ -27,6 +27,14 @@
 
             <form action="{{ route('guard.login') }}" method="POST" class="max-w-sm mx-auto flex flex-col align-center">
                 @csrf
+
+                <!-- General Error Message -->
+                @if(session('error'))
+                    <div class="mb-4 text-red-500 text-sm font-semibold">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
                 <!-- Email Field -->
                 <div class="mb-4">
                     <label for="email" class="block mb-2 text-md font-semibold tracking-widest" style="font-family: 'Poppins', sans-serif;">Email:</label>
@@ -43,8 +51,8 @@
 
                 <!-- Submit Button -->
                 <div class="flex justify-center">
-                    <button type="submit" class="w-24 border-[#8a211b] border-2 text-black font-semibold tracking-widest px-4 rounded hover:bg-[#8a211b] hover:text-white" style="font-family: 'Poppins', sans-serif;">
-                        Login
+                    <button type="submit" class="w-24 border-[#8a211b] border-2 text-black font-semibold tracking-widest px-4 hover:bg-[#8a211b] hover:text-white" style="font-family: 'Poppins', sans-serif;">
+                        Log in
                     </button>
                 </div>
             </form>
