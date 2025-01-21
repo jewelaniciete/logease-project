@@ -25,7 +25,7 @@
                 </div>
             </div>
 
-            <form action="{{ route('guard.login') }}" method="POST" class="max-w-sm mx-auto flex flex-col align-center">
+            <form action="{{ route('guard.scan') }}" method="POST" class="max-w-sm mx-auto flex flex-col align-center">
                 @csrf
 
                 <!-- General Error Message -->

@@ -80,7 +80,13 @@
             </div>
         </div>
 
-
+        <form action="{{ route('guard.logout') }}" method="POST" class="absolute top-0 right-0 p-4">
+            @csrf
+            <button type="submit" class="flex items-center justify-center gap-4">
+                <img src="/image/logout.svg" alt="Logo" class="w-6 h-6">
+                <div class="text-white font-semibold text-lg">Logout</div>
+            </button>
+        </form>
     </div>
 </body>
 </html>

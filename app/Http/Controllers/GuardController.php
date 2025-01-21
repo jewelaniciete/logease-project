@@ -15,7 +15,7 @@ class GuardController extends Controller
         return view('LoginPage');
     }
 
-    public function login(Request $request){
+    public function scan(Request $request){
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required|string',
@@ -57,6 +57,11 @@ class GuardController extends Controller
         return response()->json([
             'success' => 'Key borrowed successfully.',
         ]);
+    }
 
+    public function logout(){
+        auth()->guard('guard')->logout();
+
+        return redirect()->route('guard');
     }
 }
