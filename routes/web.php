@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\ArchiveReturnCrudController;
 Route::group(['prefix' => 'guard'], function () {
     Route::get('/login', [GuardController::class, 'index'])->name('guard');
     Route::post('/login-credential', [GuardController::class, 'login'])->name('guard.login');
+    Route::post('/borrow', [GuardController::class, 'borrow'])->name('guard.borrow');
 
 });
 
