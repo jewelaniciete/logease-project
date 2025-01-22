@@ -14,8 +14,8 @@ Route::group(['prefix' => 'guard'], function () {
     Route::get('/login', [GuardController::class, 'index'])->name('guard');
     Route::post('/scan', [GuardController::class, 'scan'])->name('guard.scan');
     Route::post('/borrow', [GuardController::class, 'borrow'])->name('guard.borrow');
+    Route::get('borrow-list', [GuardController::class, 'borrow_list'])->name('guard.borrow-list');
     Route::post('/logout', [GuardController::class, 'logout'])->name('guard.logout');
-
 });
 
 Route::get('barrow/delete/{id}', [BarrowCrudController::class, 'key_return'])->name('barrow.delete');
