@@ -34,10 +34,10 @@
                     <form action="{{ route('guard.borrow') }}" method="POST" class="mx-auto flex flex-col align-center mb-14">
                         @csrf
 
-                        <!-- General Error Message -->
-                        @if(session('error'))
+                        <!-- General Error Messages -->
+                        @if($errors->any())
                             <div class="mb-4 text-red-500 text-sm font-semibold">
-                                {{ session('error') }}
+                                {{ implode(', ', $errors->all()) }}
                             </div>
                         @endif
 
@@ -48,16 +48,22 @@
                                 class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#8a201a] focus:outline-none border-[#8a211b] border-2">
                                 <option value="" disabled selected>Select Available Keys</option>
                                 @foreach($keys as $key)
-                                    <option value="{{ $key->id }}">{{ $key->key_name }}</option>
+                                    <option value="{{ $key->id }}" {{ old('key') == $key->id ? 'selected' : '' }}>{{ $key->key_name }}</option>
                                 @endforeach
                             </select>
+                            @error('key')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <!-- Barcode Field -->
                         <div class="mb-6">
                             <label for="barcode" class="block mb-2 text-md font-semibold tracking-widest" style="font-family: 'Poppins', sans-serif;">Teachers's Barcode:</label>
                             <input type="text" id="barcode" name="barcode" required placeholder="Scan the teacher's barcode here"
-                                class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#8a201a] focus:outline-none border-[#8a211b] border-2" />
+                                class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#8a201a] focus:outline-none border-[#8a211b] border-2" value="{{ old('barcode') }}" />
+                            @error('barcode')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <!-- Submit Button -->
@@ -69,7 +75,7 @@
                     </form>
                     <div class="flex justify-between mt-4">
                         <div>
-                            <a href="" class="text-[#8a211b] font-semibold text-sm">Borrowed Keys</a>
+                            <a href="{{ route('guard.borrow-list') }}" class="text-[#8a211b] font-semibold text-sm">Borrowed Keys</a>
                         </div>
 
                         <div>
@@ -88,5 +94,15 @@
             </button>
         </form>
     </div>
+
+    <script>
+        // Assuming $credentials is passed from the controller
+        @if(isset($credentials))
+            const credentials = @json($credentials);
+            // Store credentials in sessionStorage (be cautious with sensitive data)
+            sessionStorage.setItem('email', credentials.email);
+            sessionStorage.setItem('password', credentials.password);
+        @endif
+    </script>
 </body>
 </html>
