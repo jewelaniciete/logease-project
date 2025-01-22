@@ -15,7 +15,8 @@ class GuardController extends Controller
         return view('LoginPage');
     }
 
-    public function scan(Request $request){
+    public function scan(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required|string',
@@ -30,21 +31,39 @@ class GuardController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (auth()->guard('guard')->attempt($credentials)) {
-            return view('ScanPage', compact('keys'));
+            // Pass credentials to the view (but do not expose sensitive information like passwords in production)
+            return view('ScanPage', compact('keys', 'credentials'));
         }
 
         return redirect()->back()->with('error', 'Invalid email or password.');
     }
 
-    public function borrow(Request $request){
-        $key_id = Key::find($request->key)->id;
-        $teacher_id = Teacher::where('code', $request->barcode)->first()->id;
+    public function borrow(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'key' => 'required|exists:keys,id',
+            'barcode' => 'required|exists:teachers,code',
+        ]);
 
-        if (!$teacher_id) {
-            return response()->json([
-                'error' => 'Invalid teacher barcode. Please scan registered teacher barcode.',
-            ]);
+        if ($validator->fails()) {
+            // Retrieve credentials from session (if available)
+            $credentials = $request->session()->get('credentials');
+
+            if ($credentials) {
+                // Pass the credentials to the scan method
+                return $this->scan(new Request(array_merge($request->all(), $credentials)))
+                            ->withErrors($validator);
+            }
+
+            // If no credentials are found, return an error response
+            return redirect()->back()->withErrors($validator);
         }
+
+        $keys = Key::where('status', '!=', 'borrowed')->orWhereNull('status')->get();
+
+        $key_id = Key::find($request->key)->id;
+        $teacher = Teacher::where('code', $request->barcode)->first();
+        $teacher_id = $teacher->id;
 
         $borrow = new Barrow;
         $borrow->key_id = $key_id;
@@ -57,6 +76,12 @@ class GuardController extends Controller
         return response()->json([
             'success' => 'Key borrowed successfully.',
         ]);
+    }
+
+    public function borrow_list(){
+        $models = Barrow::with(['key', 'teacher'])->get();
+
+        return view('BorrowListPage', compact('models'));
     }
 
     public function logout(){
