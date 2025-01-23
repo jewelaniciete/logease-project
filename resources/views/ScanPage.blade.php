@@ -73,13 +73,17 @@
                             </button>
                         </div>
                     </form>
-                    <div class="flex justify-between mt-4">
-                        <div>
-                            <a href="{{ route('guard.borrow-list') }}" class="text-[#8a211b] font-semibold text-sm">Borrowed Keys</a>
-                        </div>
+                    <div class="relative flex justify-center">
+                        <button id="dropdownButton"
+                            class="text-[#8a211b] font-semibold text-sm px-4 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#8a211b] ">
+                            Menu
+                        </button>
 
-                        <div>
-                            <a href="" class="text-[#8a211b] font-semibold text-sm">Returned Keys</a>
+                        <div id="dropdownMenu"
+                            class="absolute right-0 mt-12 w-48 bg-white border border-gray-200 rounded-md shadow-lg hidden">
+                            <a href="{{ route('guard.key-list') }}" class="block px-4 py-2 text-sm text-[#8a211b] hover:bg-gray-100">Keys</a>
+                            <a href="{{ route('guard.borrow-list') }}" class="block px-4 py-2 text-sm text-[#8a211b] hover:bg-gray-100">Borrowed</a>
+                            <a href="{{ route('guard.return-list') }}" class="block px-4 py-2 text-sm text-[#8a211b] hover:bg-gray-100">Returned</a>
                         </div>
                     </div>
                 </div>
@@ -103,6 +107,25 @@
             sessionStorage.setItem('email', credentials.email);
             sessionStorage.setItem('password', credentials.password);
         @endif
+
+        document.addEventListener('DOMContentLoaded', () => {
+        const dropdownButton = document.getElementById('dropdownButton');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        dropdownButton.addEventListener('click', () => {
+            dropdownMenu.classList.toggle('hidden');
+        });
+
+        // Optional: Close the dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (
+                !dropdownButton.contains(event.target) &&
+                !dropdownMenu.contains(event.target)
+            ) {
+                dropdownMenu.classList.add('hidden');
+            }
+        });
+    });
     </script>
 </body>
 </html>
