@@ -51,38 +51,58 @@
                     <tbody id="tableBody">
                       @foreach ($models as $item)
                       <tr>
-                        <td class="border-b border-[#8a211b] px-4 py-2">{{ $item->key->key_name}}</td>
+                        <td class="border-b border-[#8a211b] px-4 py-2 hidden">{{ $item->id }}</td>
+                        <td class="border-b border-[#8a211b] px-4 py-2">{{ $item->key->key_name }}</td>
                         <td class="border-b border-[#8a211b] px-4 py-2">{{ $item->teacher->firstname }} {{ $item->teacher->lastname }}</td>
                         <td class="border-b border-[#8a211b] px-4 py-2">
-                            <div class="bg-{{ $item->status === 'Returned' ? 'green' : 'red' }}-500 text-white rounded-[50px] w-[82px] px-2 py-1 text-center">
+                            <div class="bg-{{ $item->status === 'returned' ? 'green' : 'red' }}-500 text-white rounded-[50px] w-[82px] px-2 py-1 text-center">
                                 {{ $item->status }}
                             </div>
                         </td>
-                        <td class="border-b border-[#8a211b] px-4 py-2">{{ $item->date}}</td>
-                        <td class="border-b border-[#8a211b] px-4 py-2">Return</td>
-                      </tr>
+                        <td class="border-b border-[#8a211b] px-4 py-2">{{ $item->date }}</td>
+                        <td class="border-b border-[#8a211b] px-4 py-2">
+                            <form method="POST" action="{{ route('guard.return', $item->id) }}">
+                                @csrf
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                                    Return
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
                       @endforeach
                     </tbody>
                   </table>
                 </div>
-                <div class="flex justify-between items-center p-4">
-                  <button
-                    id="prevPage"
-                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                    onclick="changePage(-1)"
-                    disabled
-                  >
-                    Previous
-                  </button>
-                  <span id="currentPage" class="text-gray-700">Page 1</span>
-                  <button
-                    id="nextPage"
-                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                    onclick="changePage(1)"
-                  >
-                    Next
-                  </button>
+                <div>
+                  <div class="flex justify-center mt-4">
+                    <form action="{{ route('guard.back') }}" method="POST">
+                      @csrf
+                      <button type="submit" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
+                        Back
+                      </button>
+                    </form>
+                  </div>
+
+                  <div class="flex justify-between items-center p-4">
+                    <button
+                      id="prevPage"
+                      class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                      onclick="changePage(-1)"
+                      disabled
+                    >
+                      Previous
+                    </button>
+                    <span id="currentPage" class="text-gray-700">Page 1</span>
+                    <button
+                      id="nextPage"
+                      class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                      onclick="changePage(1)"
+                    >
+                      Next
+                    </button>
+                  </div>
                 </div>
+
               </div>
         </div>
 
