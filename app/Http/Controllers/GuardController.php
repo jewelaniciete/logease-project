@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Key;
 use App\Models\Barrow;
+use App\Models\Retrun;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -73,9 +74,37 @@ class GuardController extends Controller
 
         Key::where('id', $key_id)->update(['status' => 'borrowed']);
 
-        return response()->json([
-            'success' => 'Key borrowed successfully.',
-        ]);
+        return $this->borrow_list();
+    }
+
+    public function return(Request $request, $id)
+    {
+        $barrow = Barrow::find($id);
+
+        if ($barrow) {
+            // Create a new return entry
+            $return = new Retrun;
+            $return->key_id = $barrow->key_id;
+            $return->teacher_id = $barrow->teacher_id;
+            $return->date = Carbon::now();
+            $return->save();
+
+            // Update the status of the key table
+            $key = Key::find($barrow->key_id);
+            if ($key) {
+                $key->status = 'returned'; // Update the status to 'returned' or any appropriate value
+                $key->save();
+            }
+
+            // Update the status of the barrow table
+            $barrow->status = 'returned'; // Update the status to 'returned' or any appropriate value
+            $barrow->save();
+
+            return $this->return_list();
+        }
+
+        return redirect()->back()->with('error', 'Item not found');
+
     }
 
     public function borrow_list(){
@@ -84,9 +113,30 @@ class GuardController extends Controller
         return view('BorrowListPage', compact('models'));
     }
 
+    public function return_list(){
+        $models = Retrun::with(['key', 'teacher'])->get();
+
+        return view('ReturnListPage', compact('models'));
+    }
+
+    public function key_list(){
+        $models = Key::all();
+
+        return view('KeyListPage', compact('models'));
+    }
+
     public function logout(){
         auth()->guard('guard')->logout();
 
         return redirect()->route('guard');
+    }
+
+    public function back(Request $request){
+        $credentials = $request->session()->get('credentials');
+
+        if ($credentials) {
+            // Pass the credentials to the scan method
+            return $this->scan(new Request(array_merge($request->all(), $credentials)));
+        }
     }
 }
