@@ -8,19 +8,19 @@ use App\Http\Controllers\Admin\ArchiveBorrowCrudController;
 use App\Http\Controllers\Admin\ArchiveReturnCrudController;
 
 
-//Route::permanentRedirect('/{any?}','/admin'); //prevent access to non admin routes
+Route::permanentRedirect('/{any?}','/admin'); //prevent access to non admin routes
 
-Route::group(['prefix' => 'guard'], function () {
-    Route::get('/login', [GuardController::class, 'index'])->name('guard');
-    Route::post('/scan', [GuardController::class, 'scan'])->name('guard.scan');
-    Route::post('/borrow', [GuardController::class, 'borrow'])->name('guard.borrow');
-    Route::post('/return/{id}', [GuardController::class, 'return'])->name('guard.return');
-    Route::get('/borrow-list', [GuardController::class, 'borrow_list'])->name('guard.borrow-list');
-    Route::get('/return-list', [GuardController::class, 'return_list'])->name('guard.return-list');
-    Route::get('/key-list', [GuardController::class, 'key_list'])->name('guard.key-list');
-    Route::post('/logout', [GuardController::class, 'logout'])->name('guard.logout');
-    route::post('/back', [GuardController::class, 'back'])->name('guard.back');
-});
+// Route::group(['prefix' => 'guard'], function () {
+//     Route::get('/login', [GuardController::class, 'index'])->name('guard');
+//     Route::post('/scan', [GuardController::class, 'scan'])->name('guard.scan');
+//     Route::post('/borrow', [GuardController::class, 'borrow'])->name('guard.borrow');
+//     Route::post('/return/{id}', [GuardController::class, 'return'])->name('guard.return');
+//     Route::get('/borrow-list', [GuardController::class, 'borrow_list'])->name('guard.borrow-list');
+//     Route::get('/return-list', [GuardController::class, 'return_list'])->name('guard.return-list');
+//     Route::get('/key-list', [GuardController::class, 'key_list'])->name('guard.key-list');
+//     Route::post('/logout', [GuardController::class, 'logout'])->name('guard.logout');
+//     route::post('/back', [GuardController::class, 'back'])->name('guard.back');
+// });
 
 Route::get('barrow/delete/{id}', [BarrowCrudController::class, 'key_return'])->name('barrow.delete');
 
