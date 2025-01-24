@@ -39,6 +39,11 @@ class GuardController extends Controller
         return response()->json($keys);
     }
 
+    public function borrowed(){
+        $keys = Key::where('status', 'borrowed')->get();
+        return response()->json($keys);
+    }
+
     public function scan(Request $request){
         $validator = Validator::make($request->all(), [
             'key' => 'required|exists:keys,id',
@@ -72,34 +77,68 @@ class GuardController extends Controller
         return response()->json($models);
     }
 
-    public function return($id)
-    {
-        $barrow = Barrow::find($id);
+    // public function return($id)
+    // {
+    //     $barrow = Barrow::find($id);
 
-        if ($barrow) {
-            // Create a new return entry
-            $return = new Retrun;
-            $return->key_id = $barrow->key_id;
-            $return->teacher_id = $barrow->teacher_id;
-            $return->date = Carbon::now();
-            $return->save();
+    //     if ($barrow) {
+    //         // Create a new return entry
+    //         $return = new Retrun;
+    //         $return->key_id = $barrow->key_id;
+    //         $return->teacher_id = $barrow->teacher_id;
+    //         $return->date = Carbon::now();
+    //         $return->save();
 
-            // Update the status of the key table
-            $key = Key::find($barrow->key_id);
-            if ($key) {
-                $key->status = 'returned'; // Update the status to 'returned' or any appropriate value
-                $key->save();
-            }
+    //         // Update the status of the key table
+    //         $key = Key::find($barrow->key_id);
+    //         if ($key) {
+    //             $key->status = 'returned'; // Update the status to 'returned' or any appropriate value
+    //             $key->save();
+    //         }
 
-            // Update the status of the barrow table
-            $barrow->status = 'returned'; // Update the status to 'returned' or any appropriate value
-            $barrow->save();
+    //         // Update the status of the barrow table
+    //         $barrow->status = 'returned'; // Update the status to 'returned' or any appropriate value
+    //         $barrow->save();
 
-            return response()->json(['message' => 'Return successful.']);
+    //         return response()->json(['message' => 'Return successful.']);
+    //     }
+
+    //     return response()->json(['message' => 'Return failed.'], 400);
+    // }
+
+    public function return(Request $request){
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:keys,id',
+            'barcode' => 'required|exists:teachers,code',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
         }
 
-        return response()->json(['message' => 'Return failed.'], 400);
+        $key_id = $request->id;
+        $teacher = Teacher::where('code', $request->barcode)->first();
+        $teacher_id = $teacher->id;
 
+        $item = Barrow::where('key_id', $request->id)->where('teacher_id', $teacher_id)->first();
+
+        if (!$item) {
+            return response()->json(['message' => 'Record not found.'], 404);
+        }
+
+        $return = new Retrun;
+        $return->key_id = $key_id;
+        $return->teacher_id = $teacher_id;
+        $return->date = Carbon::now();
+        $return->save();
+
+        Key::where('id', $key_id)->update(['status' => 'returned']);
+
+        // Update the status of the barrow table
+        $item->status = 'returned';   // Update the status to 'returned' or any appropriate value
+        $item->save();
+
+        return response()->json(['message' => 'Return successful.']);
     }
 
     public function return_list(){
