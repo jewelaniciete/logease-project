@@ -52,6 +52,7 @@ class BarrowCrudController extends CrudController
                 return $entry->status;
             }
         ]);
+        CRUD::denyAccess('create');
         CRUD::denyAccess('delete');
         $this->crud->addButtonFromModelFunction('line', 'archive_borrow', 'archiveBorrow', 'end');
     }
