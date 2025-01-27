@@ -108,7 +108,7 @@ class GuardController extends Controller
 
     public function return(Request $request){
         $validator = Validator::make($request->all(), [
-            'id' => 'required|exists:keys,id',
+            'key' => 'required|exists:keys,id',
             'barcode' => 'required|exists:teachers,code',
         ]);
 
@@ -116,11 +116,12 @@ class GuardController extends Controller
             return response()->json($validator->errors(), 400);
         }
 
-        $key_id = $request->id;
+        $key_id = $request->key;
         $teacher = Teacher::where('code', $request->barcode)->first();
         $teacher_id = $teacher->id;
 
-        $item = Barrow::where('key_id', $request->id)->where('teacher_id', $teacher_id)->first();
+
+        $item = Barrow::where('key_id', $key_id)->where('teacher_id', $teacher_id)->first();
 
         if (!$item) {
             return response()->json(['message' => 'Record not found.'], 404);
