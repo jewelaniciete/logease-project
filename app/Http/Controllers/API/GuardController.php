@@ -77,34 +77,34 @@ class GuardController extends Controller
         return response()->json($models);
     }
 
-    // public function return($id)
-    // {
-    //     $barrow = Barrow::find($id);
+    public function return_option($id)
+    {
+        $barrow = Barrow::find($id);
 
-    //     if ($barrow) {
-    //         // Create a new return entry
-    //         $return = new Retrun;
-    //         $return->key_id = $barrow->key_id;
-    //         $return->teacher_id = $barrow->teacher_id;
-    //         $return->date = Carbon::now();
-    //         $return->save();
+        if ($barrow) {
+            // Create a new return entry
+            $return = new Retrun;
+            $return->key_id = $barrow->key_id;
+            $return->teacher_id = $barrow->teacher_id;
+            $return->date = Carbon::now();
+            $return->save();
 
-    //         // Update the status of the key table
-    //         $key = Key::find($barrow->key_id);
-    //         if ($key) {
-    //             $key->status = 'returned'; // Update the status to 'returned' or any appropriate value
-    //             $key->save();
-    //         }
+            // Update the status of the key table
+            $key = Key::find($barrow->key_id);
+            if ($key) {
+                $key->status = 'returned'; // Update the status to 'returned' or any appropriate value
+                $key->save();
+            }
 
-    //         // Update the status of the barrow table
-    //         $barrow->status = 'returned'; // Update the status to 'returned' or any appropriate value
-    //         $barrow->save();
+            // Update the status of the barrow table
+            $barrow->status = 'returned'; // Update the status to 'returned' or any appropriate value
+            $barrow->save();
 
-    //         return response()->json(['message' => 'Return successful.']);
-    //     }
+            return response()->json(['message' => 'Return successful.']);
+        }
 
-    //     return response()->json(['message' => 'Return failed.'], 400);
-    // }
+        return response()->json(['message' => 'Return failed.'], 400);
+    }
 
     public function return(Request $request){
         $validator = Validator::make($request->all(), [

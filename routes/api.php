@@ -17,5 +17,5 @@ Route::post('/scan', [GuardController::class, 'scan'])->name('guard.scan');
 Route::get('/borrow-list', [GuardController::class, 'borrow_list'])->name('guard.borrow-list');
 Route::get('/return-list', [GuardController::class, 'return_list'])->name('guard.return-list');
 Route::get('/key-list', [GuardController::class, 'key_list'])->name('guard.key-list');
-Route::post('/return/{id}', [GuardController::class, 'return'])->name('guard.return');
+Route::post('/return-option/{id}', [GuardController::class, 'return_option'])->name('guard.return-option');
 Route::post('/return', [GuardController::class, 'return'])->name('guard.return');
